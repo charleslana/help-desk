@@ -72,7 +72,7 @@
                   </b-field>
                   <b-field class="my-5" label="Número de telefone" label-position="on-border">
                     <b-input id="phoneNumber" v-model="phoneNumber" icon="phone" maxlength="15"
-                             placeholder="Exemplo: 11911110000" size="is-medium" type="text"
+                             placeholder="Exemplo: 11911110000 (opcional)" size="is-medium" type="text"
                              @keyup.native="checkStepForm2()"></b-input>
                   </b-field>
                   <b-button id="nextButton2" :disabled="isDisabled" class="is-primary is-fullwidth mb-5"
@@ -112,12 +112,12 @@
                       Administrador da plataforma
                     </b-radio>
                   </b-field>
-                  <b-button id="nextButton3" :disabled="isDisabled" class="is-primary is-fullwidth mb-5"
-                            icon-left="arrow-right-bold" size="is-medium"
-                            @click="handleStep3">
-                    Próximo
+                  <b-button id="nextButton3" :disabled="isDisabled" :loading="isLoading"
+                            class="is-primary is-fullwidth mb-5" icon-left="check"
+                            size="is-medium" @click="handleStep3">
+                    Finalizar
                   </b-button>
-                  <a @click.prevent="handlePreviousStep">
+                  <a :hidden="isLoading" @click.prevent="handlePreviousStep">
                     <b-icon
                         icon="arrow-left-thick"
                         size="is-small">
@@ -444,6 +444,7 @@ export default {
       nameCountrySelected: null,
       phoneNumber: null,
       accountType: null,
+      isLoading: false,
     }
   },
   methods: {
@@ -493,8 +494,12 @@ export default {
       }
     },
     handleStep3() {
-      this.activeStep++;
       this.isDisabled = true;
+      this.isLoading = true;
+      setTimeout(() => {
+        this.activeStep++;
+        this.isLoading = false;
+      }, 3000);
     },
     validEmail: function (email) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
