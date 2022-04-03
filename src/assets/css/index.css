@@ -1,0 +1,84 @@
+.has-text-primary {
+    color: #006a8d !important;
+}
+
+.is-primary {
+    background-color: #006a8d !important;
+}
+
+.input {
+    border-color: #006a8d;
+}
+
+a {
+    color: #006a8d;
+}
+
+a:hover {
+    color: #006a8d;
+}
+
+.hero.is-primary {
+    background-image: linear-gradient(
+            141deg, #00535a, #006a8d 71%, #0061a7);
+}
+
+@media print, screen and (min-width: 769px) {
+    .form:after {
+        position: absolute;
+        top: 0;
+        left: calc(100% - 2px);
+        content: "";
+        height: 100%;
+        width: 10em;
+        z-index: 2;
+        background-image: linear-gradient(
+                100deg, #fff, #fff 50%, transparent 0);
+    }
+}
+
+form.card-content {
+    padding: 2.5rem 2rem;
+}
+
+.card {
+    box-shadow: none;
+}
+
+.hero-body .container {
+    box-shadow: 1rem 2rem 2rem rgb(0 0 0 / 20%);
+}
+
+.b-steps .steps .step-items .step-item.is-active .step-marker {
+    background-color: #fff;
+    border-color: #006a8d;
+    color: #006a8d;
+}
+
+.b-steps .steps .step-items .step-item:before {
+    background-image: linear-gradient(
+            270deg, #dbdbdb 50%, #006a8d 0);
+    background-size: 200% 100%;
+    background-position: 100% 100%;
+}
+
+.b-steps .steps .step-items .step-item.is-previous .step-marker {
+    color: white;
+    background-color: #48c78e;
+}
+
+.step-item .title {
+    color: black !important;
+}
+
+.b-radio.radio input[type=radio]:checked + .check {
+    border-color: #006a8d !important;
+}
+
+.b-radio.radio input[type=radio] + .check:before {
+    background-color: #006a8d;
+}
+
+.b-radio.radio:hover input[type=radio]:not(:disabled) + .check {
+    border-color: #006a8d;
+}
