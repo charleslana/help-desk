@@ -3,9 +3,9 @@
     <div class="level">
       <div class="level-left">
         <div class="level-item">
-          <b-tooltip type="is-dark" position="is-right" label="Acesse o github">
-            <a href="#" target="_blank">
-              <b-icon icon="github" size="is-medium"></b-icon>
+          <b-tooltip label="Acesse o github" position="is-right" type="is-dark">
+            <a href="https://github.com/charleslana" target="_blank">
+              <b-icon icon="github" size="is-medium" type="is-dark"></b-icon>
             </a>
           </b-tooltip>
         </div>

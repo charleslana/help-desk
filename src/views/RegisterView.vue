@@ -93,8 +93,8 @@
                   <p class="has-text-centered mb-5">Selecione o tipo de conta
                     <b-tooltip
                         label="Caso você solicite a conta de Administrador, ela vai ficar em análise e depois será reativada."
-                        position="is-top"
-                        type="is-dark">
+                        multilined
+                        position="is-top" type="is-dark">
                       <b-icon icon="information-outline"></b-icon>
                     </b-tooltip>
                   </p>

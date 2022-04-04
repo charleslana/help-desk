@@ -10,6 +10,10 @@
     border-color: #006a8d;
 }
 
+.input:focus {
+    border-color: #006a8d;
+}
+
 a {
     color: #006a8d;
 }
@@ -34,6 +38,30 @@ a:hover {
         z-index: 2;
         background-image: linear-gradient(
                 100deg, #fff, #fff 50%, transparent 0);
+    }
+
+    html {
+        --scrollbarBG: #2a363f;
+        --thumbBG: #006a8d;
+    }
+
+    *::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--thumbBG) var(--scrollbarBG);
+    }
+
+    *::-webkit-scrollbar-track {
+        background: var(--scrollbarBG);
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: var(--thumbBG);
+        border-radius: 6px;
+        border: 2px solid var(--scrollbarBG);
     }
 }
 
@@ -62,6 +90,13 @@ form.card-content {
     background-position: 100% 100%;
 }
 
+.b-steps .steps .step-items .step-item::before, .b-steps .steps .step-items .step-item::after {
+    background: -webkit-gradient(linear, right top, left top, color-stop(50%, #dbdbdb), color-stop(50%, #006a8d));
+    background: linear-gradient(to left, #dbdbdb 50%, #006a8d 50%);
+    background-size: 200% 100%;
+    background-position: right bottom;
+}
+
 .b-steps .steps .step-items .step-item.is-previous .step-marker {
     color: white;
     background-color: #48c78e;
@@ -81,4 +116,67 @@ form.card-content {
 
 .b-radio.radio:hover input[type=radio]:not(:disabled) + .check {
     border-color: #006a8d;
+}
+
+.b-radio.radio input[type=radio]:focus:checked + .check {
+    -webkit-box-shadow: 0 0 0.5em rgb(0 106 141 / 80%);
+    box-shadow: 0 0 0.5em rgb(0 106 141 / 80%);
+}
+
+
+.section {
+    text-align: left;
+}
+
+.section .title {
+    border-bottom: 3px solid rgb(0, 106, 141);
+}
+
+main {
+    position: relative;
+    min-height: 100%;
+    padding-bottom: 5.5em;
+}
+
+main .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
+    .main {
+        padding-left: 4.5rem;
+    }
+
+    main .footer {
+        padding-right: 1.5rem !important;
+        width: calc(100% - 4.5rem) !important;
+    }
+}
+
+main .is-fullheight {
+    height: 100% !important;
+}
+
+html {
+    height: 100%;
+    width: 100vw !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    height: 100%;
+}
+
+body.has-navbar-fixed-top, html.has-navbar-fixed-top {
+    padding-top: 3.25rem;
+}
+
+.columns {
+    margin: 0 !important;
+}
+
+.is-active {
+    display: block !important;
 }

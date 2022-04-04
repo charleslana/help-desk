@@ -15,10 +15,11 @@
                 <b-input id="password" icon="lock" password-reveal placeholder="Informe sua senha" required
                          size="is-medium" type="password"></b-input>
               </b-field>
-              <b-button id="loginButton" class="is-primary is-fullwidth mb-5" icon-left="login" native-type="submit" size="is-medium">
+              <b-button id="loginButton" :disabled="isLoading" :loading="isLoading" class="is-primary is-fullwidth mb-5"
+                        icon-left="login" native-type="submit" size="is-medium">
                 Entrar
               </b-button>
-              <router-link to="/register">Cadastre-se</router-link>
+              <router-link :hidden="isLoading" to="/register">Cadastre-se</router-link>
             </form>
           </div>
           <div class="column card login-bg is-hidden-mobile">
@@ -32,14 +33,22 @@
 
 <script>
 import FooterComponent from "@/components/FooterComponent";
+import router from "@/router";
+
 export default {
   components: {FooterComponent},
   data() {
-    return {}
+    return {
+      isLoading: false
+    }
   },
   methods: {
     checkForm(e) {
-      alert('Login success');
+      this.isLoading = true;
+      setTimeout(() => {
+        router.push('/dashboard');
+        //this.isLoading = false;
+      }, 3000);
       e.preventDefault();
     }
   }
