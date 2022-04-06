@@ -3,6 +3,8 @@ import VueRouter, {RouteConfig} from 'vue-router';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import DashboardView from '../views/DashboardView.vue';
+import RequestsView from '../views/RequestsView.vue';
+import SettingsView from '../views/SettingsView.vue';
 
 Vue.use(VueRouter)
 
@@ -14,6 +16,10 @@ const routes: Array<RouteConfig> = [{
     path: '/register', component: RegisterView
 }, {
     path: '/dashboard', component: DashboardView
+}, {
+    path: '/requests', component: RequestsView
+}, {
+    path: '/settings', component: SettingsView
 }, {
     path: '*', component: () => import('../views/NotFoundView.vue')
 }]

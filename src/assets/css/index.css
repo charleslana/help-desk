@@ -63,6 +63,10 @@ a:hover {
         border-radius: 6px;
         border: 2px solid var(--scrollbarBG);
     }
+
+    .menu span {
+        word-break: break-word;
+    }
 }
 
 form.card-content {
@@ -128,7 +132,7 @@ form.card-content {
     text-align: left;
 }
 
-.section .title {
+.section > .title {
     border-bottom: 3px solid rgb(0, 106, 141);
 }
 

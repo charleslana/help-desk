@@ -4,22 +4,12 @@
       <b-menu-item icon="home" label="Home" size="is-large" tag="router-link" to="/dashboard"></b-menu-item>
     </b-menu-list>
     <b-menu-list>
-      <b-menu-item icon="close" label="Error" size="is-large" tag="router-link" to="/error"></b-menu-item>
+      <b-menu-item icon="clipboard-edit-outline" label="Solicitações" size="is-large" tag="router-link"
+                   to="/requests"></b-menu-item>
     </b-menu-list>
     <b-menu-list>
-      <b-menu-item icon="close" label="Error" size="is-large" tag="router-link" to="/error"></b-menu-item>
-    </b-menu-list>
-    <b-menu-list>
-      <b-menu-item icon="close" label="Error" size="is-large" tag="router-link" to="/error"></b-menu-item>
-    </b-menu-list>
-    <b-menu-list>
-      <b-menu-item icon="close" label="Error" size="is-large" tag="router-link" to="/error"></b-menu-item>
-    </b-menu-list>
-    <b-menu-list>
-      <b-menu-item icon="close" label="Error" size="is-large" tag="router-link" to="/error"></b-menu-item>
-    </b-menu-list>
-    <b-menu-list>
-      <b-menu-item icon="close" label="Error" size="is-large" tag="router-link" to="/error"></b-menu-item>
+      <b-menu-item icon="account-cog" label="Configurações" size="is-large" tag="router-link"
+                   to="/settings"></b-menu-item>
     </b-menu-list>
   </b-menu>
 </template>
@@ -67,10 +57,15 @@ export default {
     flex-direction: column !important;
     justify-content: center !important;
   }
+
+  main {
+    padding-bottom: 9.5em !important;
+  }
 }
 
 .menu-list a {
   color: #00b4b8 !important;
+  align-items: center;
 }
 
 .menu-list a:hover {
