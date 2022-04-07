@@ -6,11 +6,15 @@
     background-color: #006a8d !important;
 }
 
-.input {
+.input, .select select, .textarea {
     border-color: #006a8d;
 }
 
-.input:focus {
+.input:focus, .select select:focus, .textarea:focus {
+    border-color: #006a8d;
+}
+
+.select:not(.is-multiple):not(.is-loading)::after {
     border-color: #006a8d;
 }
 
@@ -134,6 +138,7 @@ form.card-content {
 
 .section > .title {
     border-bottom: 3px solid rgb(0, 106, 141);
+    line-height: 2rem;
 }
 
 main {
@@ -182,5 +187,9 @@ body.has-navbar-fixed-top, html.has-navbar-fixed-top {
 }
 
 .is-active {
-    display: block !important;
+    display: block;
+}
+
+.loading-overlay .loading-icon {
+    position: unset;
 }

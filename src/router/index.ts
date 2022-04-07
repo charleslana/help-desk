@@ -5,6 +5,7 @@ import RegisterView from '../views/RegisterView.vue';
 import DashboardView from '../views/DashboardView.vue';
 import RequestsView from '../views/RequestsView.vue';
 import SettingsView from '../views/SettingsView.vue';
+import CreateRequestView from '../views/CreateRequestView.vue';
 
 Vue.use(VueRouter)
 
@@ -18,6 +19,8 @@ const routes: Array<RouteConfig> = [{
     path: '/dashboard', component: DashboardView
 }, {
     path: '/requests', component: RequestsView
+}, {
+    path: '/requests/create', component: CreateRequestView
 }, {
     path: '/settings', component: SettingsView
 }, {

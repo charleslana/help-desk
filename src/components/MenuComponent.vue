@@ -33,6 +33,7 @@ export default {
   padding-top: 3.5rem;
   background-color: #2a363f;
   overflow-y: auto;
+  z-index: 10;
 }
 
 @media screen and (max-width: 1023px) {

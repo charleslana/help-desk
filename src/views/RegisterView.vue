@@ -59,6 +59,7 @@
                   </b-field>
                   <b-field class="my-5" label="Informe seu país" label-position="on-border">
                     <b-autocomplete
+                        id="nameCountry"
                         v-model="nameCountry"
                         :data="filteredDataCountryArray"
                         clearable
