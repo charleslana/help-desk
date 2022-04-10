@@ -6,6 +6,7 @@ import DashboardView from '../views/DashboardView.vue';
 import RequestsView from '../views/RequestsView.vue';
 import SettingsView from '../views/SettingsView.vue';
 import CreateRequestView from '../views/CreateRequestView.vue';
+import UsersView from '../views/UsersView.vue';
 
 Vue.use(VueRouter)
 
@@ -23,6 +24,8 @@ const routes: Array<RouteConfig> = [{
     path: '/requests/create', component: CreateRequestView
 }, {
     path: '/settings', component: SettingsView
+}, {
+    path: '/users', component: UsersView
 }, {
     path: '*', component: () => import('../views/NotFoundView.vue')
 }]

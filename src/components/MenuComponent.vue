@@ -11,6 +11,10 @@
       <b-menu-item icon="account-cog" label="Configurações" size="is-large" tag="router-link"
                    to="/settings"></b-menu-item>
     </b-menu-list>
+    <b-menu-list>
+      <b-menu-item icon="account-multiple" label="Usuários" size="is-large" tag="router-link"
+                   to="/users"></b-menu-item>
+    </b-menu-list>
   </b-menu>
 </template>
 

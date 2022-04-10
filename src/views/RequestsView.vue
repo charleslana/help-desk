@@ -134,7 +134,7 @@
 import FooterComponent from "@/components/FooterComponent";
 import NavbarComponent from "@/components/NavbarComponent";
 import MenuComponent from "@/components/MenuComponent";
-import StatusEnum, {handleStatusTag} from "@/enum/StatusEnum";
+import RequestStatusEnum, {handleStatusTag} from "@/enum/RequestStatusEnum";
 import PriorityEnum, {handlePriorityType} from '@/enum/PriorityEnum';
 
 export default {
@@ -168,31 +168,31 @@ export default {
         {
           id: 1,
           priority: PriorityEnum.MEDIUM,
-          status: StatusEnum.OPENED,
+          status: RequestStatusEnum.OPENED,
           date: new Date(),
         },
         {
           id: 2,
           priority: PriorityEnum.LOW,
-          status: StatusEnum.PROCESSING,
+          status: RequestStatusEnum.PROCESSING,
           date: new Date('2022/04/08'),
         },
         {
           id: 3,
           priority: PriorityEnum.HIGH,
-          status: StatusEnum.OPENED,
+          status: RequestStatusEnum.OPENED,
           date: new Date(),
         },
         {
           id: 4,
           priority: PriorityEnum.CRITICAL,
-          status: StatusEnum.FINISHED,
+          status: RequestStatusEnum.FINISHED,
           date: new Date(),
         },
         {
           id: 5,
           priority: PriorityEnum.MEDIUM,
-          status: StatusEnum.OPENED,
+          status: RequestStatusEnum.OPENED,
           date: new Date(),
         },
       ],
@@ -202,7 +202,7 @@ export default {
       activeTab: 0,
       editSelectCategory: null,
       editDescription: null,
-      editStatus: StatusEnum.OPENED,
+      editStatus: RequestStatusEnum.OPENED,
       justify: null,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -252,7 +252,7 @@ export default {
       this.isModalActive = true;
       this.editSelectCategory = handlePriorityType(PriorityEnum.CRITICAL);
       this.editDescription = 'Descrição da solicitação';
-      this.editStatus = StatusEnum.PROCESSING;
+      this.editStatus = RequestStatusEnum.PROCESSING;
       this.justify = 'Informamos que foi feito o contato com o cliente e será realizado a manutenção.';
       this.createdAt = new Date();
       const dt = new Date();
@@ -260,7 +260,7 @@ export default {
       this.updatedAt = dt;
     },
     isEdit() {
-      return this.editStatus !== StatusEnum.OPENED;
+      return this.editStatus !== RequestStatusEnum.OPENED;
     },
     cancelRequest() {
       this.isModalActive = false;

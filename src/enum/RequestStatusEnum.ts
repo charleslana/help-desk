@@ -1,16 +1,16 @@
-enum StatusEnum {
+enum RequestStatusEnum {
     OPENED = 'Em aberto', PROCESSING = 'Em análise', FINISHED = 'Finalizada'
 }
 
-export const handleStatusTag = (action: StatusEnum) => {
+export const handleStatusTag = (action: RequestStatusEnum) => {
     switch (action) {
-        case StatusEnum.OPENED:
+        case RequestStatusEnum.OPENED:
             return 'is-info';
-        case StatusEnum.PROCESSING:
+        case RequestStatusEnum.PROCESSING:
             return 'is-success';
         default:
             return 'is-danger';
     }
 };
 
-export default StatusEnum;
+export default RequestStatusEnum;

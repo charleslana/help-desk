@@ -12,6 +12,8 @@
 
 .input:focus, .select select:focus, .textarea:focus {
     border-color: #006a8d;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }
 
 .select:not(.is-multiple):not(.is-loading)::after {
@@ -241,4 +243,9 @@ body.has-navbar-fixed-top, html.has-navbar-fixed-top {
 .button.is-primary:focus:not(:active), .button.is-primary.is-focused:not(:active) {
     -webkit-box-shadow: none;
     box-shadow: none;
+}
+
+.pagination-link.is-current {
+    background-color: #006a8d;
+    border-color: #006a8d;
 }
