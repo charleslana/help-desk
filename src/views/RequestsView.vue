@@ -63,7 +63,18 @@
           <div class="card-content">
             <b-tabs v-model="activeTab">
               <b-tab-item label="Dados da solicitação">
-                <span :class="handleStatusTag(editStatus)">{{ editStatus }}</span>
+                <div class="level">
+                  <div class="level-left">
+                    <div class="level-item">
+                      <span :class="handleStatusTag(editStatus)">{{ editStatus }}</span>
+                    </div>
+                  </div>
+                  <div class="level-right">
+                    <div class="level-item">
+                      <p>Data da solicitação: <strong>{{ getDate(createdAt) }}</strong></p>
+                    </div>
+                  </div>
+                </div>
                 <form class="form" @submit="checkFormEditRequest">
                   <b-field class="my-5" label="Prioridade" label-position="on-border">
                     <b-select id="editSelectCategory" v-model="editSelectCategory" :disabled="isEdit()"
@@ -90,6 +101,7 @@
                 </form>
               </b-tab-item>
               <b-tab-item label="Notificações">
+                <p>Data da última atualização: <strong>{{ getDate(updatedAt) }}</strong></p>
                 <b-field class="my-5" label="Justificativa" label-position="on-border">
                   <b-input :value="justify" disabled
                            maxlength="1000" minlength="10"
@@ -192,6 +204,8 @@ export default {
       editDescription: null,
       editStatus: StatusEnum.OPENED,
       justify: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }
   },
   methods: {
@@ -240,6 +254,10 @@ export default {
       this.editDescription = 'Descrição da solicitação';
       this.editStatus = StatusEnum.PROCESSING;
       this.justify = 'Informamos que foi feito o contato com o cliente e será realizado a manutenção.';
+      this.createdAt = new Date();
+      const dt = new Date();
+      dt.setDate(dt.getDate() + 3);
+      this.updatedAt = dt;
     },
     isEdit() {
       return this.editStatus !== StatusEnum.OPENED;
