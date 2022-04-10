@@ -212,3 +212,33 @@ body.has-navbar-fixed-top, html.has-navbar-fixed-top {
 .b-tabs .tabs li a:focus {
     border-bottom-color: #006a8d;
 }
+
+.datepicker .datepicker-table .datepicker-body .datepicker-cell.is-today {
+    border: solid 1px rgba(0, 106, 141, 0.5);
+}
+
+.datepicker .datepicker-table .datepicker-body .datepicker-cell.is-selected.is-first-selected {
+    background-color: #006a8d;
+}
+
+.datepicker .datepicker-table .datepicker-body .datepicker-cell.is-selected.is-within-selected {
+    background-color: rgba(0, 106, 141, 0.5);
+}
+
+.datepicker .datepicker-table .datepicker-body .datepicker-cell.is-selected.is-last-selected {
+    background-color: #006a8d;
+}
+
+.pagination-previous:focus, .pagination-next:focus, .pagination-link:focus {
+    border-color: #006a8d;
+}
+
+.datepicker .dropdown .input[readonly]:focus, .datepicker .dropdown .input[readonly].is-focused, .datepicker .dropdown .input[readonly]:active, .datepicker .dropdown .input[readonly].is-active, .datepicker .dropdown-trigger .input[readonly]:focus, .datepicker .dropdown-trigger .input[readonly].is-focused, .datepicker .dropdown-trigger .input[readonly]:active, .datepicker .dropdown-trigger .input[readonly].is-active {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.button.is-primary:focus:not(:active), .button.is-primary.is-focused:not(:active) {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}

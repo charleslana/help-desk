@@ -46,7 +46,7 @@
               <div class="content">
                 <p>{{ request.priority }}</p>
                 <strong>Solicitação realizada em: </strong>
-                <time class="is-italic">{{ request.date }}</time>
+                <time class="is-italic">{{ getDate(request.date) }}</time>
               </div>
             </div>
             <footer class="card-footer">
@@ -157,31 +157,31 @@ export default {
           id: 1,
           priority: PriorityEnum.MEDIUM,
           status: StatusEnum.OPENED,
-          date: this.getDate()
+          date: new Date(),
         },
         {
           id: 2,
           priority: PriorityEnum.LOW,
           status: StatusEnum.PROCESSING,
-          date: this.getDate(new Date('2022/04/08'))
+          date: new Date('2022/04/08'),
         },
         {
           id: 3,
           priority: PriorityEnum.HIGH,
           status: StatusEnum.OPENED,
-          date: this.getDate()
+          date: new Date(),
         },
         {
           id: 4,
           priority: PriorityEnum.CRITICAL,
           status: StatusEnum.FINISHED,
-          date: this.getDate()
+          date: new Date(),
         },
         {
           id: 5,
           priority: PriorityEnum.MEDIUM,
           status: StatusEnum.OPENED,
-          date: this.getDate()
+          date: new Date(),
         },
       ],
       filterRequests: [],
@@ -220,12 +220,12 @@ export default {
         }
         if (priority && dates.length > 0) {
           return request.priority === PriorityEnum[priority] &&
-              request.date >= this.getDate(dates[0]) && request.date <= this.getDate(dates[1])
+              request.date.getTime() >= dates[0].getTime() && request.date.getTime() <= dates[1].getTime();
         }
         if (priority) {
           return request.priority === PriorityEnum[priority];
         }
-        return request.date >= this.getDate(dates[0]) && request.date <= this.getDate(dates[1])
+        return request.date.getTime() >= dates[0].getTime() && request.date.getTime() <= dates[1].getTime();
       });
     },
     clear() {
