@@ -7,6 +7,12 @@
       <nav v-if="isAdmin" aria-label="admin" class="level">
         <div class="level-item has-text-centered">
           <div>
+            <p class="heading">Solicitações totais</p>
+            <p class="title">5.300</p>
+          </div>
+        </div>
+        <div class="level-item has-text-centered">
+          <div>
             <p class="heading">Solicitações em aberto</p>
             <p class="title">3.456</p>
           </div>
@@ -23,18 +29,18 @@
             <p class="title">1.200</p>
           </div>
         </div>
-        <div class="level-item has-text-centered">
-          <div>
-            <p class="heading">Solicitações totais</p>
-            <p class="title">5.300</p>
-          </div>
-        </div>
       </nav>
       <nav v-if="!isAdmin" aria-label="user" class="level">
         <div class="level-item has-text-centered">
           <div>
             <p class="heading">Minhas solicitações</p>
             <p class="title">5</p>
+          </div>
+        </div>
+        <div class="level-item has-text-centered">
+          <div>
+            <p class="heading">Em aberto</p>
+            <p class="title">0</p>
           </div>
         </div>
         <div class="level-item has-text-centered">

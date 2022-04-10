@@ -9,7 +9,7 @@
           <b-select id="selectCategory" v-model="selectCategory" expanded placeholder="Selecione uma categoria"
                     required>
             <option
-                v-for="option in priorityTypes"
+                v-for="option in priority"
                 :key="option.id"
                 :value="option.type">
               {{ option.title }}
@@ -37,36 +37,37 @@
     <footer-component/>
   </main>
 </template>
-<script>
-import FooterComponent from "@/components/FooterComponent";
-import NavbarComponent from "@/components/NavbarComponent";
-import MenuComponent from "@/components/MenuComponent";
-import router from "@/router";
+<script type="ts">
+import FooterComponent from '@/components/FooterComponent';
+import NavbarComponent from '@/components/NavbarComponent';
+import MenuComponent from '@/components/MenuComponent';
+import router from '@/router';
+import PriorityEnum, {handlePriorityType} from '@/enum/PriorityEnum';
 
 export default {
   data() {
     return {
       isLoading: false,
-      priorityTypes: [
+      priority: [
         {
           id: 1,
-          type: 'LOW',
-          title: 'Software não funciona'
+          type: this.handlePriorityType(PriorityEnum.LOW),
+          title: PriorityEnum.LOW
         },
         {
           id: 2,
-          type: 'MEDIUM',
-          title: 'Meu computador parou de funcionar'
+          type: this.handlePriorityType(PriorityEnum.MEDIUM),
+          title: PriorityEnum.MEDIUM
         },
         {
           id: 3,
-          type: 'HIGH',
-          title: 'Internet parou de funcionar'
+          type: this.handlePriorityType(PriorityEnum.HIGH),
+          title: PriorityEnum.HIGH
         },
         {
           id: 4,
-          type: 'CRITICAL',
-          title: 'Servidor parou de funcionar'
+          type: this.handlePriorityType(PriorityEnum.CRITICAL),
+          title: PriorityEnum.CRITICAL
         }
       ],
       selectCategory: null,
@@ -83,6 +84,9 @@ export default {
         router.push('/requests');
       }, 3000);
       e.preventDefault();
+    },
+    handlePriorityType(priority) {
+      return handlePriorityType(priority);
     }
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}

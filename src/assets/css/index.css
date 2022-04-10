@@ -32,7 +32,7 @@ a:hover {
 }
 
 @media print, screen and (min-width: 769px) {
-    .form:after {
+    .card-content.form:after {
         position: absolute;
         top: 0;
         left: calc(100% - 2px);
@@ -77,8 +77,18 @@ form.card-content {
     padding: 2.5rem 2rem;
 }
 
-.card {
+.column.card {
     box-shadow: none;
+}
+
+.equal-height {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.equal-height .card-content {
+    flex: auto;
 }
 
 .hero-body .container {
@@ -192,4 +202,13 @@ body.has-navbar-fixed-top, html.has-navbar-fixed-top {
 
 .loading-overlay .loading-icon {
     position: unset;
+}
+
+.tabs li.is-active a {
+    border-bottom-color: #006a8d;
+    color: #006a8d;
+}
+
+.b-tabs .tabs li a:focus {
+    border-bottom-color: #006a8d;
 }
