@@ -115,6 +115,11 @@
                   Cancelar
                 </b-button>
               </b-tab-item>
+              <b-tab-item v-if="isAdmin === true" label="Detalhes">
+                <p>Dados do usuário</p>
+                <p>E-mail: <strong>{{ email }}</strong></p>
+                <p>Número de telefone: <strong>{{ phoneNumber }}</strong></p>
+              </b-tab-item>
             </b-tabs>
             <div class="has-text-right">
               <b-button id="editCancelButton" class="is-default" icon-left="close"
@@ -206,6 +211,9 @@ export default {
       justify: null,
       createdAt: new Date(),
       updatedAt: new Date(),
+      isAdmin: true,
+      email: null,
+      phoneNumber: null,
     }
   },
   methods: {
@@ -258,6 +266,8 @@ export default {
       const dt = new Date();
       dt.setDate(dt.getDate() + 3);
       this.updatedAt = dt;
+      this.email = 'charles@charles.com';
+      this.phoneNumber = 'Usuário não possui número de telefone';
     },
     isEdit() {
       return this.editStatus !== RequestStatusEnum.OPENED;
