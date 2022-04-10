@@ -239,6 +239,7 @@ export default {
       this.editSelectCategory = handlePriorityType(PriorityEnum.CRITICAL);
       this.editDescription = 'Descrição da solicitação';
       this.editStatus = StatusEnum.PROCESSING;
+      this.justify = 'Informamos que foi feito o contato com o cliente e será realizado a manutenção.';
     },
     isEdit() {
       return this.editStatus !== StatusEnum.OPENED;
