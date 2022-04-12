@@ -167,6 +167,7 @@
 
 <script>
 import FooterComponent from "@/components/FooterComponent";
+import api from "@/config/api";
 
 export default {
   components: {FooterComponent},
@@ -478,6 +479,9 @@ export default {
       if (this.password !== this.passwordConfirmation) {
         this.errors.push('A confirmação das senhas está incorreta.');
       }
+      if (this.password.length < 6) {
+        this.errors.push('A senha deve conter no mínimo 6 caracteres');
+      }
       if (!this.errors.length) {
         this.activeStep++;
         this.isDisabled = true;
@@ -495,12 +499,7 @@ export default {
       }
     },
     handleStep3() {
-      this.isDisabled = true;
-      this.isLoading = true;
-      setTimeout(() => {
-        this.activeStep++;
-        this.isLoading = false;
-      }, 3000);
+      this.requestCreateUser();
     },
     validEmail: function (email) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -515,6 +514,37 @@ export default {
         this.activeStep--;
         this.isDisabled = false;
       }
+    },
+    requestCreateUser() {
+      this.isDisabled = true;
+      this.isLoading = true;
+      api.post('/api/v1/user', {
+        email: this.email,
+        password: this.password,
+        name: this.name,
+        country: this.nameCountry,
+        phoneNumber: this.phoneNumber,
+        accountType: this.accountType,
+      })
+          .then(() => {
+            this.activeStep++;
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+        this.isDisabled = false;
+      });
     }
   },
   computed: {
