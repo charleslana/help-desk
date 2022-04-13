@@ -8,7 +8,7 @@
     <template #end>
       <b-navbar-item tag="div">
         <div class="buttons">
-          <p>Bem-vindo(a) Charles!</p>
+          <p>Bem-vindo(a) {{ name }}</p>
           <b-button id="logout" class="ml-5" icon-left="logout" outlined @click="logout">
             Desconectar
           </b-button>
@@ -20,10 +20,13 @@
 
 <script>
 import router from "@/router";
+import LocalStorageUtils from "@/utils/LocalStorageUtils";
 
 export default {
   data() {
-    return {}
+    return {
+      name: '',
+    }
   },
   methods: {
     logout() {
@@ -31,10 +34,11 @@ export default {
     }
   },
   mounted() {
-    document.body.classList.add('has-navbar-fixed-top')
+    document.body.classList.add('has-navbar-fixed-top');
+    this.name = LocalStorageUtils.getName();
   },
   destroyed() {
-    document.body.classList.remove('has-navbar-fixed-top')
+    document.body.classList.remove('has-navbar-fixed-top');
   }
 }
 </script>

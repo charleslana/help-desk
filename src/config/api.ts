@@ -1,12 +1,13 @@
 import axios from 'axios';
 import router from '@/router';
+import LocalStorageUtils from '@/utils/LocalStorageUtils';
 
 const api = axios.create({
     baseURL: 'http://localhost:8081',
 });
 
 api.interceptors.request.use(config => {
-    const token = localStorage.getItem('token');
+    const token = LocalStorageUtils.getToken();
     config.headers = {
         Authorization: token ? `Bearer ${token}` : '',
     };

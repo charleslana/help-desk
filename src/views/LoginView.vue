@@ -37,6 +37,7 @@
 import FooterComponent from "@/components/FooterComponent";
 import router from "@/router";
 import api from "@/config/api";
+import LocalStorageUtils from "@/utils/LocalStorageUtils";
 
 export default {
   components: {FooterComponent},
@@ -71,7 +72,10 @@ export default {
               this.isLoading = false;
               return;
             }
-            localStorage.setItem('token', response.data.access_token);
+            LocalStorageUtils.setToken(response.data.accessToken);
+            LocalStorageUtils.setAccountType(response.data.accountType);
+            LocalStorageUtils.setName(response.data.name);
+            LocalStorageUtils.setEmail(response.data.email);
             router.push('/dashboard');
           })
           .catch(error => {
@@ -91,10 +95,7 @@ export default {
     }
   },
   mounted() {
-    const token = localStorage.getItem('token');
-    if (token) {
-      localStorage.removeItem('token');
-    }
+    LocalStorageUtils.logout();
   }
 }
 </script>
