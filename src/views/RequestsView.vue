@@ -44,15 +44,21 @@
           <div class="card equal-height">
             <div class="card-content">
               <div class="content">
-                <p>{{ request.priority }}</p>
+                <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                <p v-if="!isLoading">{{ request.priority }}</p>
                 <strong>Solicitação realizada em: </strong>
-                <time class="is-italic">{{ getDate(request.date) }}</time>
+                <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                <time v-if="!isLoading" class="is-italic">{{ getDate(request.date) }}</time>
               </div>
             </div>
             <footer class="card-footer">
-              <a class="card-footer-item" @click.prevent="openModal">Visualizar</a>
               <div class="card-footer-item">
-                <span :class="handleStatusTag(request.status)">{{ request.status }}</span>
+                <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                <a v-if="!isLoading" @click.prevent="openModal(request.id)">Visualizar</a>
+              </div>
+              <div class="card-footer-item">
+                <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                <span v-if="!isLoading" :class="handleStatusTag(request.status)">{{ request.status }}</span>
               </div>
             </footer>
           </div>
@@ -66,18 +72,22 @@
                 <div class="level">
                   <div class="level-left">
                     <div class="level-item">
-                      <span :class="handleStatusTag(editStatus)">{{ editStatus }}</span>
+                      <b-skeleton :active="isLoading" size="is-large" width="64px"></b-skeleton>
+                      <span v-if="!isLoading" :class="handleStatusTag(editStatus)">{{ editStatus }}</span>
                     </div>
                   </div>
                   <div class="level-right">
                     <div class="level-item">
-                      <p>Data da solicitação: <strong>{{ getDate(createdAt) }}</strong></p>
+                      <b-skeleton :active="isLoading" size="is-large" width="100px"></b-skeleton>
+                      <p v-if="!isLoading">Data da solicitação: <strong>{{ getDate(createdAt) }}</strong></p>
                     </div>
                   </div>
                 </div>
                 <form class="form" @submit="checkFormEditRequest">
                   <b-field class="my-5" label="Prioridade" label-position="on-border">
-                    <b-select id="editSelectCategory" v-model="editSelectCategory" :disabled="isEdit()"
+                    <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                    <b-select v-if="!isLoading" id="editSelectCategory" v-model="editSelectCategory"
+                              :disabled="isEdit()"
                               expanded
                               placeholder="Selecione uma categoria" required>
                       <option
@@ -89,12 +99,14 @@
                     </b-select>
                   </b-field>
                   <b-field class="my-5" label="Descrição" label-position="on-border">
-                    <b-input id="editDescription" :disabled="isEdit()" :value="editDescription"
+                    <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                    <b-input v-if="!isLoading" id="editDescription" :disabled="isEdit()" :value="editDescription"
                              maxlength="1000" minlength="10"
                              placeholder="Descreva o problema detalhadamente aqui" required rows="7"
                              type="textarea"></b-input>
                   </b-field>
-                  <b-button id="editButton" :disabled="isEdit()" class="is-primary mb-5" icon-left="content-save"
+                  <b-button id="editButton" :disabled="isEdit() || isLoading" class="is-primary mb-5"
+                            icon-left="content-save"
                             native-type="submit">
                     Salvar
                   </b-button>
@@ -122,7 +134,7 @@
               </b-tab-item>
             </b-tabs>
             <div class="has-text-right">
-              <b-button id="editCancelButton" class="is-default" icon-left="close"
+              <b-button id="editCancelButton" :disabled="isLoading" class="is-default" icon-left="close"
                         @click="isModalActive = false">
                 Fechar
               </b-button>
@@ -130,7 +142,6 @@
           </div>
         </div>
       </b-modal>
-      <b-loading v-model="isLoading" :is-full-page="true"></b-loading>
     </section>
     <footer-component/>
   </main>
@@ -141,6 +152,7 @@ import NavbarComponent from "@/components/NavbarComponent";
 import MenuComponent from "@/components/MenuComponent";
 import RequestStatusEnum, {handleStatusTag} from "@/enum/RequestStatusEnum";
 import PriorityEnum, {handlePriorityType} from '@/enum/PriorityEnum';
+import api from "@/config/api";
 
 export default {
   data() {
@@ -255,19 +267,21 @@ export default {
       this.selectCategory = null;
       this.dates = [];
     },
-    openModal() {
+    openModal(id) {
       this.activeTab = 0;
       this.isModalActive = true;
-      this.editSelectCategory = handlePriorityType(PriorityEnum.CRITICAL);
-      this.editDescription = 'Descrição da solicitação';
-      this.editStatus = RequestStatusEnum.PROCESSING;
-      this.justify = 'Informamos que foi feito o contato com o cliente e será realizado a manutenção.';
-      this.createdAt = new Date();
-      const dt = new Date();
-      dt.setDate(dt.getDate() + 3);
-      this.updatedAt = dt;
-      this.email = 'charles@charles.com';
-      this.phoneNumber = 'Usuário não possui número de telefone';
+      this.isLoading = true;
+      //this.getRequest(id);
+      // this.editSelectCategory = handlePriorityType(PriorityEnum.CRITICAL);
+      // this.editDescription = 'Descrição da solicitação';
+      // this.editStatus = RequestStatusEnum.PROCESSING;
+      // this.justify = 'Informamos que foi feito o contato com o cliente e será realizado a manutenção.';
+      // this.createdAt = new Date();
+      // const dt = new Date();
+      // dt.setDate(dt.getDate() + 3);
+      // this.updatedAt = dt;
+      // this.email = 'charles@charles.com';
+      // this.phoneNumber = 'Usuário não possui número de telefone';
     },
     isEdit() {
       return this.editStatus !== RequestStatusEnum.OPENED;
@@ -278,12 +292,63 @@ export default {
         message: 'Solicitação cancelada com sucesso!',
         type: 'is-success'
       });
+    },
+    getRequests() {
+      this.isLoading = true;
+      api.get('/api/v1/request')
+          .then(response => {
+            this.requests = response.data;
+            this.filterRequests = this.requests;
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    getRequest(id) {
+      this.isLoading = true;
+      api.get(`/api/v1/request/${id}`)
+          .then(response => {
+            this.editStatus = response.data.status;
+            this.editSelectCategory = response.data.priority;
+            this.editDescription = response.data.description;
+            this.justify = response.data.justify;
+            this.createdAt = response.data.createdAt;
+            this.updatedAt = response.data.updatedAt;
+            this.email = response.data.user.email;
+            this.phoneNumber = response.data.user.phoneNumber;
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
     }
   },
   mounted() {
-    this.isLoading = true;
     this.filterRequests = this.requests;
-    this.isLoading = false;
+    this.getRequests();
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}
 }

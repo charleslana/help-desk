@@ -86,10 +86,10 @@ export default {
     }
   },
   mounted() {
-    this.requestTotalizer();
+    this.getTotalizer();
   },
   methods: {
-    requestTotalizer() {
+    getTotalizer() {
       this.isLoading = true;
       api.get('/api/v1/request/totalizer')
           .then(response => {
@@ -112,7 +112,7 @@ export default {
             });
           }).finally(() => {
         this.isLoading = false;
-      })
+      });
     }
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}
