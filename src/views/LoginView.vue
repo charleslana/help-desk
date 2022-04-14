@@ -66,7 +66,7 @@ export default {
           .then(response => {
             if (response.status === 204) {
               this.$buefy.toast.open({
-                message: 'Credenciais inválidas',
+                message: 'Acesso inválido',
                 type: 'is-danger'
               });
               this.isLoading = false;

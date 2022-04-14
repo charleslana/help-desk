@@ -102,7 +102,8 @@
                   </b-field>
                   <b-field class="my-5" label="Descrição" label-position="on-border">
                     <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
-                    <b-input v-if="!isLoading" id="editDescription" :disabled="isEdit()" :value="editDescription"
+                    <b-input v-if="!isLoading" id="editDescription" v-model="editDescription" :disabled="isEdit()"
+                             :value="editDescription"
                              maxlength="1000" minlength="10"
                              placeholder="Descreva o problema detalhadamente aqui" required rows="7"
                              type="textarea"></b-input>
@@ -235,6 +236,7 @@ export default {
       isAdmin: false,
       email: null,
       phoneNumber: null,
+      requestId: null,
     }
   },
   methods: {
@@ -245,6 +247,7 @@ export default {
       e.preventDefault();
     },
     checkFormEditRequest(e) {
+      this.requestEdit();
       e.preventDefault();
     },
     handlePriorityType(priority) {
@@ -299,13 +302,6 @@ export default {
     isEdit() {
       return handleStatus(this.editStatus) !== RequestStatusEnum.OPENED;
     },
-    cancelRequest() {
-      this.isModalActive = false;
-      this.$buefy.toast.open({
-        message: 'Solicitação cancelada com sucesso!',
-        type: 'is-success'
-      });
-    },
     getRequests() {
       this.isLoading = true;
       api.get('/api/v1/request')
@@ -333,6 +329,7 @@ export default {
       this.isLoading = true;
       api.get(`/api/v1/request/${id}/detail`)
           .then(response => {
+            this.requestId = response.data.id;
             this.editStatus = response.data.status;
             this.editSelectCategory = response.data.priority;
             this.editDescription = response.data.description;
@@ -344,6 +341,65 @@ export default {
               this.email = response.data.user.email;
               this.phoneNumber = response.data.user.phoneNumber;
             }
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    requestEdit() {
+      this.isLoading = true;
+      api.put('/api/v1/request', {
+        id: this.requestId,
+        status: this.editStatus,
+        priority: this.editSelectCategory,
+        description: this.editDescription
+      })
+          .then(() => {
+            this.$buefy.toast.open({
+              message: 'Edição da solicitação efetuado com sucesso.',
+              type: 'is-success'
+            });
+            this.isModalActive = false;
+            this.getRequests();
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    cancelRequest() {
+      this.isLoading = true;
+      api.delete(`/api/v1/request/${this.requestId}`)
+          .then(() => {
+            this.$buefy.toast.open({
+              message: 'Solicitação cancelada com sucesso.',
+              type: 'is-success'
+            });
+            this.isModalActive = false;
+            this.getRequests();
           })
           .catch(error => {
             if (error.response !== undefined) {
