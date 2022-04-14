@@ -48,7 +48,7 @@
                 <p v-if="!isLoading">{{ handlePriority(request.priority) }}</p>
                 <strong>Solicitação realizada em: </strong>
                 <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
-                <time v-if="!isLoading" class="is-italic">{{ getDate(request.date) }}</time>
+                <time v-if="!isLoading" class="is-italic">{{ getDate(new Date(request.createdAt)) }}</time>
               </div>
             </div>
             <footer class="card-footer">
@@ -262,19 +262,27 @@ export default {
     handleStatus(status) {
       return handleStatus(status);
     },
+    removeTime(date) {
+      const newDate = new Date(date);
+      return new Date(
+          newDate.getFullYear(),
+          newDate.getMonth(),
+          newDate.getDate()
+      );
+    },
     filter(priority, dates) {
       this.filterRequests = this.requests.filter((request) => {
         if (!priority && dates.length === 0) {
           return this.requests;
         }
         if (priority && dates.length > 0) {
-          return request.priority === PriorityEnum[priority] &&
-              request.date.getTime() >= dates[0].getTime() && request.date.getTime() <= dates[1].getTime();
+          return this.handlePriority(request.priority) === PriorityEnum[priority] &&
+              this.removeTime(request.createdAt).getTime() >= dates[0].getTime() && this.removeTime(request.createdAt).getTime() <= dates[1].getTime();
         }
         if (priority) {
-          return request.priority === PriorityEnum[priority];
+          return this.handlePriority(request.priority) === PriorityEnum[priority];
         }
-        return request.date.getTime() >= dates[0].getTime() && request.date.getTime() <= dates[1].getTime();
+        return this.removeTime(request.createdAt).getTime() >= dates[0].getTime() && this.removeTime(request.createdAt).getTime() <= dates[1].getTime();
       });
     },
     clear() {
