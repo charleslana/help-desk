@@ -45,7 +45,7 @@
             <div class="card-content">
               <div class="content">
                 <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
-                <p v-if="!isLoading">{{ request.priority }}</p>
+                <p v-if="!isLoading">{{ handlePriority(request.priority) }}</p>
                 <strong>Solicitação realizada em: </strong>
                 <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
                 <time v-if="!isLoading" class="is-italic">{{ getDate(request.date) }}</time>
@@ -58,7 +58,9 @@
               </div>
               <div class="card-footer-item">
                 <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
-                <span v-if="!isLoading" :class="handleStatusTag(request.status)">{{ request.status }}</span>
+                <span v-if="!isLoading" :class="handleStatusTag(request.status)">{{
+                    handleStatus(request.status)
+                  }}</span>
               </div>
             </footer>
           </div>
@@ -73,7 +75,7 @@
                   <div class="level-left">
                     <div class="level-item">
                       <b-skeleton :active="isLoading" size="is-large" width="64px"></b-skeleton>
-                      <span v-if="!isLoading" :class="handleStatusTag(editStatus)">{{ editStatus }}</span>
+                      <span v-if="!isLoading" :class="handleStatusTag(editStatus)">{{ handleStatus(editStatus) }}</span>
                     </div>
                   </div>
                   <div class="level-right">
@@ -113,9 +115,11 @@
                 </form>
               </b-tab-item>
               <b-tab-item label="Notificações">
-                <p>Data da última atualização: <strong>{{ getDate(updatedAt) }}</strong></p>
+                <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                <p v-if="!isLoading">Data da última atualização: <strong>{{ getDate(updatedAt) }}</strong></p>
                 <b-field class="my-5" label="Justificativa" label-position="on-border">
-                  <b-input :value="justify" disabled
+                  <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                  <b-input v-if="!isLoading" :value="justify" disabled
                            maxlength="1000" minlength="10"
                            placeholder="Nenhuma justificativa no momento" required rows="7"
                            type="textarea"></b-input>
@@ -123,14 +127,17 @@
               </b-tab-item>
               <b-tab-item label="Cancelar">
                 <p>Deseja cancelar a solicitação?</p>
-                <b-button id="deleteButton" class="is-danger my-5" icon-left="close" @click="cancelRequest">
+                <b-button id="deleteButton" :disabled="isLoading || isEdit()" class="is-danger my-5" icon-left="close"
+                          @click="cancelRequest">
                   Cancelar
                 </b-button>
               </b-tab-item>
               <b-tab-item v-if="isAdmin === true" label="Detalhes">
                 <p>Dados do usuário</p>
-                <p>E-mail: <strong>{{ email }}</strong></p>
-                <p>Número de telefone: <strong>{{ phoneNumber }}</strong></p>
+                <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                <p v-if="!isLoading">E-mail: <strong>{{ email }}</strong></p>
+                <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                <p v-if="!isLoading">Número de telefone: <strong>{{ phoneNumber }}</strong></p>
               </b-tab-item>
             </b-tabs>
             <div class="has-text-right">
@@ -150,9 +157,11 @@
 import FooterComponent from "@/components/FooterComponent";
 import NavbarComponent from "@/components/NavbarComponent";
 import MenuComponent from "@/components/MenuComponent";
-import RequestStatusEnum, {handleStatusTag} from "@/enum/RequestStatusEnum";
-import PriorityEnum, {handlePriorityType} from '@/enum/PriorityEnum';
+import RequestStatusEnum, {handleStatus, handleStatusTag} from "@/enum/RequestStatusEnum";
+import PriorityEnum, {handlePriority, handlePriorityType} from '@/enum/PriorityEnum';
 import api from "@/config/api";
+import LocalStorageUtils from "@/utils/LocalStorageUtils";
+import AccountType from "@/enum/AccountType";
 
 export default {
   data() {
@@ -223,7 +232,7 @@ export default {
       justify: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      isAdmin: true,
+      isAdmin: false,
       email: null,
       phoneNumber: null,
     }
@@ -241,11 +250,17 @@ export default {
     handlePriorityType(priority) {
       return handlePriorityType(priority);
     },
+    handlePriority(priority) {
+      return handlePriority(priority);
+    },
     getDate(date = new Date) {
       return date.toLocaleDateString("pt-BR");
     },
     handleStatusTag(tag) {
       return 'tag '.concat(handleStatusTag(tag));
+    },
+    handleStatus(status) {
+      return handleStatus(status);
     },
     filter(priority, dates) {
       this.filterRequests = this.requests.filter((request) => {
@@ -271,20 +286,10 @@ export default {
       this.activeTab = 0;
       this.isModalActive = true;
       this.isLoading = true;
-      //this.getRequest(id);
-      // this.editSelectCategory = handlePriorityType(PriorityEnum.CRITICAL);
-      // this.editDescription = 'Descrição da solicitação';
-      // this.editStatus = RequestStatusEnum.PROCESSING;
-      // this.justify = 'Informamos que foi feito o contato com o cliente e será realizado a manutenção.';
-      // this.createdAt = new Date();
-      // const dt = new Date();
-      // dt.setDate(dt.getDate() + 3);
-      // this.updatedAt = dt;
-      // this.email = 'charles@charles.com';
-      // this.phoneNumber = 'Usuário não possui número de telefone';
+      this.getRequest(id);
     },
     isEdit() {
-      return this.editStatus !== RequestStatusEnum.OPENED;
+      return handleStatus(this.editStatus) !== RequestStatusEnum.OPENED;
     },
     cancelRequest() {
       this.isModalActive = false;
@@ -318,16 +323,19 @@ export default {
     },
     getRequest(id) {
       this.isLoading = true;
-      api.get(`/api/v1/request/${id}`)
+      api.get(`/api/v1/request/${id}/detail`)
           .then(response => {
             this.editStatus = response.data.status;
             this.editSelectCategory = response.data.priority;
             this.editDescription = response.data.description;
             this.justify = response.data.justify;
-            this.createdAt = response.data.createdAt;
-            this.updatedAt = response.data.updatedAt;
-            this.email = response.data.user.email;
-            this.phoneNumber = response.data.user.phoneNumber;
+            this.createdAt = new Date(response.data.createdAt);
+            this.updatedAt = new Date(response.data.updatedAt);
+            if (LocalStorageUtils.getAccountType() === AccountType.ADMIN) {
+              this.isAdmin = true;
+              this.email = response.data.user.email;
+              this.phoneNumber = response.data.user.phoneNumber;
+            }
           })
           .catch(error => {
             if (error.response !== undefined) {
