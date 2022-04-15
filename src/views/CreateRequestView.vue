@@ -17,13 +17,12 @@
           </b-select>
         </b-field>
         <b-field class="my-5" label="Descrição" label-position="on-border">
-          <b-input id="description" maxlength="1000" minlength="10"
-                   placeholder="Descreva o problema detalhadamente aqui" required
-                   rows="7" type="textarea"></b-input>
+          <b-input id="description" v-model="description" maxlength="1000"
+                   minlength="10" placeholder="Descreva o problema detalhadamente aqui"
+                   required rows="7" type="textarea"></b-input>
         </b-field>
         <div class="buttons is-justify-content-space-between">
-          <b-button id="createButton" :disabled="isLoading" class="is-primary mb-5" icon-left="plus"
-                    native-type="submit">
+          <b-button id="createButton" class="is-primary mb-5" icon-left="plus" native-type="submit">
             Cadastrar
           </b-button>
           <b-button id="cancelButton" class="mb-5" icon-left="arrow-left" native-type="submit" tag="router-link"
@@ -43,6 +42,7 @@ import NavbarComponent from '@/components/NavbarComponent';
 import MenuComponent from '@/components/MenuComponent';
 import router from '@/router';
 import PriorityEnum, {handlePriorityType} from '@/enum/PriorityEnum';
+import api from '@/config/api';
 
 export default {
   data() {
@@ -71,23 +71,46 @@ export default {
         }
       ],
       selectCategory: null,
+      description: null,
     }
   },
   methods: {
     checkForm(e) {
-      this.isLoading = true;
-      setTimeout(() => {
-        this.$buefy.toast.open({
-          message: 'Solicitação efetuada com sucesso!',
-          type: 'is-success'
-        });
-        router.push('/requests');
-      }, 3000);
+      this.createRequest();
       e.preventDefault();
     },
     handlePriorityType(priority) {
       return handlePriorityType(priority);
-    }
+    },
+    createRequest() {
+      this.isLoading = true;
+      api.post('/api/v1/request', {
+        priority: this.selectCategory,
+        description: this.description,
+      })
+          .then(() => {
+            this.$buefy.toast.open({
+              message: 'Solicitação efetuada com sucesso.',
+              type: 'is-success'
+            });
+            router.push('/requests');
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}
 }

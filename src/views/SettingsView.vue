@@ -5,18 +5,23 @@
     <section class="section">
       <h2 class="title is-4 has-text-primary">Configurações do Usuário</h2>
       <b-tabs v-model="activeTab">
-        <b-tab-item label="Meus dados">
+        <b-tab-item :disabled="isLoading" label="Meus dados">
           <form class="form" @submit="checkFormMyData">
             <b-field class="my-5" label="E-mail" label-position="on-border">
-              <b-input :value="email" disabled icon="email"
+              <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+              <b-input v-if="!isLoading" :value="email" disabled icon="email"
                        placeholder="Informe seu e-mail" required type="email"></b-input>
             </b-field>
             <b-field class="my-5" label="Nome" label-position="on-border">
-              <b-input id="name" v-model="name" :value="name" icon="account" placeholder="Informe seu nome"
+              <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+              <b-input v-if="!isLoading" id="name" v-model="name" :value="name" icon="account"
+                       placeholder="Informe seu nome"
                        required type="text"></b-input>
             </b-field>
             <b-field class="my-5" label="Informe seu país" label-position="on-border">
+              <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
               <b-autocomplete
+                  v-if="!isLoading"
                   id="nameCountry"
                   v-model="nameCountry"
                   :data="filteredDataCountryArray"
@@ -30,27 +35,31 @@
               </b-autocomplete>
             </b-field>
             <b-field class="my-5" label="Número de telefone" label-position="on-border">
-              <b-input id="phoneNumber" v-model="phoneNumber" :value="phoneNumber" icon="phone" maxlength="15"
+              <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+              <b-input v-if="!isLoading" id="phoneNumber" v-model="phoneNumber" :value="phoneNumber" icon="phone"
+                       maxlength="15"
                        placeholder="Exemplo: 11911110000 (opcional)" type="text"></b-input>
             </b-field>
-            <b-button id="editButton" class="is-primary mb-5" icon-left="pencil" native-type="submit">
+            <b-button id="editButton" :disabled="isLoading" :loading="isLoading" class="is-primary mb-5"
+                      icon-left="pencil" native-type="submit">
               Editar
             </b-button>
           </form>
         </b-tab-item>
-        <b-tab-item label="Alterar senha">
+        <b-tab-item :disabled="isLoading" label="Alterar senha">
           <form class="form" @submit="checkFormChangePassword">
             <b-field class="my-5" label="Senha" label-position="on-border">
-              <b-input id="password" icon="lock" password-reveal placeholder="Informe sua nova senha" required
-                       type="password"></b-input>
+              <b-input id="password" v-model="newPassword" icon="lock" minlength="6"
+                       password-reveal
+                       placeholder="Informe sua nova senha" required type="password"></b-input>
             </b-field>
-            <b-button id="changePasswordButton" class="is-primary mb-5" icon-left="lock-check" native-type="submit">
+            <b-button id="changePasswordButton" :disabled="isLoading" :loading="isLoading" class="is-primary mb-5"
+                      icon-left="lock-check" native-type="submit">
               Salvar
             </b-button>
           </form>
         </b-tab-item>
       </b-tabs>
-      <b-loading v-model="isLoading" :is-full-page="true"></b-loading>
     </section>
     <footer-component/>
   </main>
@@ -59,6 +68,8 @@
 import FooterComponent from "@/components/FooterComponent";
 import NavbarComponent from "@/components/NavbarComponent";
 import MenuComponent from "@/components/MenuComponent";
+import api from "@/config/api";
+import LocalStorageUtils from "@/utils/LocalStorageUtils";
 
 export default {
   data() {
@@ -318,19 +329,103 @@ export default {
       nameCountry: '',
       nameCountrySelected: null,
       phoneNumber: null,
+      newPassword: null,
     }
   },
   methods: {
     checkFormMyData(e) {
-      this.isLoading = true;
-      setTimeout(() => {
-        this.isLoading = false;
-      }, 3000);
+      this.editUser();
       e.preventDefault();
     },
     checkFormChangePassword(e) {
+      this.changePassword();
       e.preventDefault();
-    }
+    },
+    getUser() {
+      this.isLoading = true;
+      api.get('/api/v1/user/detail')
+          .then(response => {
+            this.email = response.data.email;
+            this.name = response.data.name;
+            this.nameCountry = response.data.country;
+            this.phoneNumber = response.data.phoneNumber;
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    editUser() {
+      this.isLoading = true;
+      api.put('/api/v1/user', {
+        email: this.email,
+        name: this.name,
+        country: this.nameCountry,
+        phoneNumber: this.phoneNumber === '' ? null : this.phoneNumber,
+      })
+          .then(() => {
+            LocalStorageUtils.setName(this.name);
+            document.getElementById("userName").textContent = this.name;
+            this.$buefy.toast.open({
+              message: 'Dados cadastrais atualizado com sucesso.',
+              type: 'is-success'
+            });
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    changePassword() {
+      this.isLoading = true;
+      api.put('/api/v1/user/change-password', {
+        password: this.newPassword,
+      })
+          .then(() => {
+            this.newPassword = null;
+            this.$buefy.toast.open({
+              message: 'Senha atualizada com sucesso.',
+              type: 'is-success'
+            });
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
   },
   computed: {
     filteredDataCountryArray() {
@@ -343,10 +438,7 @@ export default {
     }
   },
   mounted() {
-    this.email = 'test@test.com';
-    this.name = 'Charles';
-    this.nameCountry = 'Brasil';
-    this.phoneNumber = null;
+    this.getUser();
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}
 }

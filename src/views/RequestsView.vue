@@ -128,7 +128,8 @@
               </b-tab-item>
               <b-tab-item label="Cancelar">
                 <p>Deseja cancelar a solicitação?</p>
-                <b-button id="deleteButton" :disabled="isLoading || isEdit()" class="is-danger my-5" icon-left="close"
+                <b-button id="deleteButton" :disabled="isLoading || isEdit()" :loading="isLoading"
+                          class="is-danger my-5" icon-left="close"
                           @click="cancelRequest">
                   Cancelar
                 </b-button>
@@ -308,6 +309,7 @@ export default {
           .then(response => {
             this.requests = response.data;
             this.filterRequests = this.requests;
+            this.clear();
           })
           .catch(error => {
             if (error.response !== undefined) {

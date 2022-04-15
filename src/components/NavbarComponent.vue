@@ -8,7 +8,7 @@
     <template #end>
       <b-navbar-item tag="div">
         <div class="buttons">
-          <p>Bem-vindo(a) {{ name }}</p>
+          <p>Bem-vindo(a) <span id="userName">{{ name }}</span></p>
           <b-button id="logout" class="ml-5" icon-left="logout" outlined @click="logout">
             Desconectar
           </b-button>
