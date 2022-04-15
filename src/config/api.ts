@@ -3,7 +3,7 @@ import router from '@/router';
 import LocalStorageUtils from '@/utils/LocalStorageUtils';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8081',
+    baseURL: 'https://h4b-help-desk-api.herokuapp.com', //http://localhost:8081
 });
 
 api.interceptors.request.use(config => {
