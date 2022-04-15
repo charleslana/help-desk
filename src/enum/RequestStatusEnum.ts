@@ -26,4 +26,8 @@ export const handleStatus = (action: string) => {
     }
 };
 
+export const handleStatusType = (priority: RequestStatusEnum) => {
+    return Object.keys(RequestStatusEnum)[Object.values(RequestStatusEnum).indexOf(priority)];
+}
+
 export default RequestStatusEnum;

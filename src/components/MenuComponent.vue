@@ -11,7 +11,7 @@
       <b-menu-item icon="account-cog" label="Configurações" size="is-large" tag="router-link"
                    to="/settings"></b-menu-item>
     </b-menu-list>
-    <b-menu-list>
+    <b-menu-list v-if="isAdmin">
       <b-menu-item icon="account-multiple" label="Usuários" size="is-large" tag="router-link"
                    to="/users"></b-menu-item>
     </b-menu-list>
@@ -19,11 +19,24 @@
 </template>
 
 <script>
+import LocalStorageUtils from "@/utils/LocalStorageUtils";
+import AccountType, {handleAccountType} from "@/enum/AccountType";
+
 export default {
   data() {
     return {
-      isActive: true
+      isAdmin: false,
     }
+  },
+  methods: {
+    checkAdmin() {
+      if (LocalStorageUtils.getAccountType() === handleAccountType(AccountType.ADMIN)) {
+        this.isAdmin = true;
+      }
+    }
+  },
+  mounted() {
+    this.checkAdmin();
   }
 }
 </script>

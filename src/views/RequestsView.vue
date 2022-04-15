@@ -89,7 +89,7 @@
                   <b-field class="my-5" label="Prioridade" label-position="on-border">
                     <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
                     <b-select v-if="!isLoading" id="editSelectCategory" v-model="editSelectCategory"
-                              :disabled="isEdit()"
+                              :disabled="isEdit() || getIsAdmin() && email !== myEmail()"
                               expanded
                               placeholder="Selecione uma categoria" required>
                       <option
@@ -102,13 +102,15 @@
                   </b-field>
                   <b-field class="my-5" label="Descrição" label-position="on-border">
                     <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
-                    <b-input v-if="!isLoading" id="editDescription" v-model="editDescription" :disabled="isEdit()"
+                    <b-input v-if="!isLoading" id="editDescription" v-model="editDescription"
+                             :disabled="isEdit() || getIsAdmin() && email !== myEmail()"
                              :value="editDescription"
                              maxlength="1000" minlength="10"
                              placeholder="Descreva o problema detalhadamente aqui" required rows="7"
                              type="textarea"></b-input>
                   </b-field>
-                  <b-button id="editButton" :disabled="isEdit() || isLoading" class="is-primary mb-5"
+                  <b-button v-if="email === myEmail() || !email" id="editButton" :disabled="isEdit() || isLoading"
+                            class="is-primary mb-5"
                             icon-left="content-save"
                             native-type="submit">
                     Salvar
@@ -118,15 +120,33 @@
               <b-tab-item label="Notificações">
                 <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
                 <p v-if="!isLoading">Data da última atualização: <strong>{{ getDate(updatedAt) }}</strong></p>
-                <b-field class="my-5" label="Justificativa" label-position="on-border">
-                  <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
-                  <b-input v-if="!isLoading" :value="justify" disabled
-                           maxlength="1000" minlength="10"
-                           placeholder="Nenhuma justificativa no momento" required rows="7"
-                           type="textarea"></b-input>
-                </b-field>
+                <form class="form" @submit="checkFormChangeStatus">
+                  <b-field class="my-5" label="Justificativa" label-position="on-border">
+                    <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                    <b-input v-if="!isLoading" v-model="justify" :disabled="!getIsAdmin()" :value="justify"
+                             maxlength="1000" minlength="10"
+                             placeholder="Nenhuma justificativa no momento" rows="7"
+                             type="textarea"></b-input>
+                  </b-field>
+                  <b-field v-if="!isLoading && getIsAdmin()" class="my-5" label="Status" label-position="on-border">
+                    <b-skeleton :active="isLoading" size="is-large"></b-skeleton>
+                    <b-select id="editStatus" v-model="editStatus" expanded placeholder="Selecione um status" required>
+                      <option
+                          v-for="option in status"
+                          :key="option.id"
+                          :value="option.type">
+                        {{ option.title }}
+                      </option>
+                    </b-select>
+                  </b-field>
+                  <b-button v-if="getIsAdmin()" id="justifyButton" :disabled="isLoading" class="is-primary mb-5"
+                            icon-left="content-save"
+                            native-type="submit">
+                    Justificar
+                  </b-button>
+                </form>
               </b-tab-item>
-              <b-tab-item label="Cancelar">
+              <b-tab-item v-if="!isAdmin || email === myEmail()" label="Cancelar">
                 <p>Deseja cancelar a solicitação?</p>
                 <b-button id="deleteButton" :disabled="isLoading || isEdit()" :loading="isLoading"
                           class="is-danger my-5" icon-left="close"
@@ -159,11 +179,11 @@
 import FooterComponent from "@/components/FooterComponent";
 import NavbarComponent from "@/components/NavbarComponent";
 import MenuComponent from "@/components/MenuComponent";
-import RequestStatusEnum, {handleStatus, handleStatusTag} from "@/enum/RequestStatusEnum";
+import RequestStatusEnum, {handleStatus, handleStatusTag, handleStatusType} from "@/enum/RequestStatusEnum";
 import PriorityEnum, {handlePriority, handlePriorityType} from '@/enum/PriorityEnum';
 import api from "@/config/api";
 import LocalStorageUtils from "@/utils/LocalStorageUtils";
-import AccountType from "@/enum/AccountType";
+import AccountType, {handleAccountType} from "@/enum/AccountType";
 
 export default {
   data() {
@@ -238,6 +258,23 @@ export default {
       email: null,
       phoneNumber: null,
       requestId: null,
+      status: [
+        {
+          id: 1,
+          type: handleStatusType(RequestStatusEnum.OPENED),
+          title: RequestStatusEnum.OPENED
+        },
+        {
+          id: 2,
+          type: handleStatusType(RequestStatusEnum.PROCESSING),
+          title: RequestStatusEnum.PROCESSING
+        },
+        {
+          id: 3,
+          type: handleStatusType(RequestStatusEnum.FINISHED),
+          title: RequestStatusEnum.FINISHED
+        }
+      ],
     }
   },
   methods: {
@@ -249,6 +286,10 @@ export default {
     },
     checkFormEditRequest(e) {
       this.requestEdit();
+      e.preventDefault();
+    },
+    checkFormChangeStatus(e) {
+      this.requestChangeStatus();
       e.preventDefault();
     },
     handlePriorityType(priority) {
@@ -265,6 +306,9 @@ export default {
     },
     handleStatus(status) {
       return handleStatus(status);
+    },
+    handleStatusType(status) {
+      return handleStatusType(status);
     },
     removeTime(date) {
       const newDate = new Date(date);
@@ -298,10 +342,27 @@ export default {
       this.activeTab = 0;
       this.isModalActive = true;
       this.isLoading = true;
+      if (LocalStorageUtils.getAccountType() === handleAccountType(AccountType.ADMIN)) {
+        this.getAllRequest(id);
+        return;
+      }
       this.getRequest(id);
     },
     isEdit() {
       return handleStatus(this.editStatus) !== RequestStatusEnum.OPENED;
+    },
+    getIsAdmin() {
+      return LocalStorageUtils.getAccountType() === handleAccountType(AccountType.ADMIN);
+    },
+    checkRequests() {
+      if (LocalStorageUtils.getAccountType() === handleAccountType(AccountType.ADMIN)) {
+        this.getAllRequests();
+        return;
+      }
+      this.getRequests();
+    },
+    myEmail() {
+      return LocalStorageUtils.getEmail();
     },
     getRequests() {
       this.isLoading = true;
@@ -338,11 +399,6 @@ export default {
             this.justify = response.data.justify;
             this.createdAt = new Date(response.data.createdAt);
             this.updatedAt = new Date(response.data.updatedAt);
-            if (LocalStorageUtils.getAccountType() === AccountType.ADMIN) {
-              this.isAdmin = true;
-              this.email = response.data.user.email;
-              this.phoneNumber = response.data.user.phoneNumber;
-            }
           })
           .catch(error => {
             if (error.response !== undefined) {
@@ -370,11 +426,11 @@ export default {
       })
           .then(() => {
             this.$buefy.toast.open({
-              message: 'Edição da solicitação efetuado com sucesso.',
+              message: 'Solicitação atualizada com sucesso.',
               type: 'is-success'
             });
             this.isModalActive = false;
-            this.getRequests();
+            this.checkRequests();
           })
           .catch(error => {
             if (error.response !== undefined) {
@@ -401,7 +457,7 @@ export default {
               type: 'is-success'
             });
             this.isModalActive = false;
-            this.getRequests();
+            this.checkRequests();
           })
           .catch(error => {
             if (error.response !== undefined) {
@@ -418,11 +474,97 @@ export default {
           }).finally(() => {
         this.isLoading = false;
       });
-    }
+    },
+    getAllRequests() {
+      this.isLoading = true;
+      api.get('/api/v1/request/all')
+          .then(response => {
+            this.requests = response.data;
+            this.filterRequests = this.requests;
+            this.clear();
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    getAllRequest(id) {
+      this.isLoading = true;
+      api.get(`/api/v1/request/${id}`)
+          .then(response => {
+            this.requestId = response.data.id;
+            this.editStatus = response.data.status;
+            this.editSelectCategory = response.data.priority;
+            this.editDescription = response.data.description;
+            this.justify = response.data.justify;
+            this.createdAt = new Date(response.data.createdAt);
+            this.updatedAt = new Date(response.data.updatedAt);
+            this.isAdmin = true;
+            this.email = response.data.user.email;
+            this.phoneNumber = response.data.user.phoneNumber;
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    requestChangeStatus() {
+      this.isLoading = true;
+      api.put('/api/v1/request/change-status', {
+        id: this.requestId,
+        status: this.editStatus,
+        justify: this.justify,
+      })
+          .then(() => {
+            this.$buefy.toast.open({
+              message: 'Solicitação justificada com sucesso.',
+              type: 'is-success'
+            });
+            this.isModalActive = false;
+            this.getAllRequests();
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
   },
   mounted() {
     this.filterRequests = this.requests;
-    this.getRequests();
+    this.checkRequests();
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}
 }

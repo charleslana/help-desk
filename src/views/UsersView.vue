@@ -23,10 +23,10 @@
           {{ props.row.email }}
         </b-table-column>
         <b-table-column v-slot="props" field="accountType" label="Tipo de conta" searchable sortable>
-          {{ props.row.accountType }}
+          {{ handleAccount(props.row.accountType) }}
         </b-table-column>
         <b-table-column v-slot="props" field="status" label="Status" searchable sortable>
-          {{ props.row.status }}
+          {{ handleUser(props.row.status) }}
         </b-table-column>
         <b-table-column v-slot="props" centered field="date" label="Registrado em" sortable>
           {{ getDate(props.row.date) }}
@@ -87,8 +87,9 @@
 import FooterComponent from "@/components/FooterComponent";
 import NavbarComponent from "@/components/NavbarComponent";
 import MenuComponent from "@/components/MenuComponent";
-import UserStatusEnum, {handleUserStatus} from "@/enum/UserStatusEnum";
-import AccountType, {handleAccountType} from "@/enum/AccountType";
+import UserStatusEnum, {handleUser, handleUserStatus} from "@/enum/UserStatusEnum";
+import AccountType, {handleAccount, handleAccountType} from "@/enum/AccountType";
+import api from "@/config/api";
 
 export default {
   data() {
@@ -139,12 +140,13 @@ export default {
           'status': UserStatusEnum.INACTIVE,
           'date': new Date()
         },
-      ]
+      ],
+      userId: null,
     }
   },
   methods: {
     checkForm(e) {
-      this.isModalActive = false;
+      this.changeUser();
       e.preventDefault();
     },
     getDate(date = new Date) {
@@ -153,15 +155,100 @@ export default {
     handleUserStatus(status) {
       return handleUserStatus(status);
     },
+    handleUser(status) {
+      return handleUser(status);
+    },
     handleAccountType(accountType) {
       return handleAccountType(accountType);
     },
+    handleAccount(accountType) {
+      return handleAccount(accountType);
+    },
     openModal(id) {
       this.isModalActive = true;
-      this.email = 'charles@charles.com';
-      this.selectStatus = handleUserStatus(UserStatusEnum.ACTIVE);
-      this.selectAccountType = handleAccountType(AccountType.ADMIN);
-    }
+      this.getUser(id);
+    },
+    getUsers() {
+      this.isLoading = true;
+      api.get('/api/v1/user')
+          .then(response => {
+            this.data = response.data;
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    getUser(id) {
+      this.isLoading = true;
+      api.get(`/api/v1/user/${id}`)
+          .then(response => {
+            this.selectAccountType = response.data.accountType;
+            this.email = response.data.email;
+            this.selectStatus = response.data.status;
+            this.userId = response.data.id;
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+    changeUser() {
+      this.isLoading = true;
+      api.put('/api/v1/user/change-user', {
+        id: this.userId,
+        status: this.selectStatus,
+        accountType: this.selectAccountType,
+      })
+          .then(() => {
+            this.$buefy.toast.open({
+              message: 'Usuário atualizado com sucesso.',
+              type: 'is-success'
+            });
+            this.isModalActive = false;
+            this.getUsers();
+          })
+          .catch(error => {
+            if (error.response !== undefined) {
+              this.$buefy.toast.open({
+                message: error.response.data.message,
+                type: 'is-danger'
+              });
+              return;
+            }
+            this.$buefy.toast.open({
+              message: error.toString(),
+              type: 'is-danger'
+            });
+          }).finally(() => {
+        this.isLoading = false;
+      });
+    },
+  },
+  mounted() {
+    this.getUsers();
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}
 }

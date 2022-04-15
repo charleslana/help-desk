@@ -73,6 +73,8 @@ import FooterComponent from "@/components/FooterComponent";
 import NavbarComponent from "@/components/NavbarComponent";
 import MenuComponent from "@/components/MenuComponent";
 import api from "@/config/api";
+import LocalStorageUtils from "@/utils/LocalStorageUtils";
+import AccountType, {handleAccountType} from "@/enum/AccountType";
 
 export default {
   data() {
@@ -87,6 +89,7 @@ export default {
   },
   mounted() {
     this.getTotalizer();
+    this.checkAdmin();
   },
   methods: {
     getTotalizer() {
@@ -113,6 +116,11 @@ export default {
           }).finally(() => {
         this.isLoading = false;
       });
+    },
+    checkAdmin() {
+      if (LocalStorageUtils.getAccountType() === handleAccountType(AccountType.ADMIN)) {
+        this.isAdmin = true;
+      }
     }
   },
   components: {MenuComponent, NavbarComponent, FooterComponent}
