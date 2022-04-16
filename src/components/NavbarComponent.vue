@@ -2,7 +2,10 @@
   <b-navbar class="is-fixed-top">
     <template #brand>
       <b-navbar-item :to="{ path: '/dashboard' }" tag="router-link">
-        <h1 class="has-text-primary title">Help4 Business</h1>
+        <img
+            alt="Logo da plataforma, as iniciais H, 4 e B forma a imagem construtiva da plataforma"
+            src="../assets/images/logo.png"
+        >
       </b-navbar-item>
     </template>
     <template #end>

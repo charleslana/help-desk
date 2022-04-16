@@ -7,6 +7,7 @@
             <form class="card-content form" @submit="checkForm">
               <h1 class="has-text-primary title is-size-3-mobile is-size-2 is-size-1-widescreen has-text-left">Bem-vindo
                 ao Help4 Business</h1>
+              <p class="has-text-left is-italic">Uma plataforma help desk para empresas</p>
               <b-field class="my-5" label="E-mail" label-position="on-border">
                 <b-input id="email" v-model="email" icon="email" placeholder="Informe seu e-mail" required
                          size="is-medium"
@@ -102,7 +103,7 @@ export default {
 
 <style>
 .login-bg {
-  background-image: url("https://via.placeholder.com/800x1000");
+  background-image: url('../assets/images/logo.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

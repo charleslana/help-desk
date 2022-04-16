@@ -156,7 +156,7 @@
               <router-link v-if="activeStep === 0 || activeStep === 3" to="/login">Efetuar Login</router-link>
             </div>
           </div>
-          <div class="column card login-bg is-hidden-mobile">
+          <div class="column card register-bg is-hidden-mobile">
           </div>
         </div>
       </div>
@@ -561,8 +561,8 @@ export default {
 </script>
 
 <style>
-.login-bg {
-  background-image: url("https://via.placeholder.com/800x1000");
+.register-bg {
+  background-image: url('../assets/images/register.png');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
