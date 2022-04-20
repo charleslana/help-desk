@@ -29,7 +29,7 @@
           {{ handleUser(props.row.status) }}
         </b-table-column>
         <b-table-column v-slot="props" centered field="date" label="Registrado em" sortable>
-          {{ getDate(props.row.date) }}
+          {{ getDate(new Date(props.row.createdAt)) }}
         </b-table-column>
         <b-table-column v-slot="props">
           <button class="button is-small is-info" @click="openModal(props.row.id)">
@@ -123,24 +123,7 @@ export default {
           title: AccountType.ADMIN
         }
       ],
-      data: [
-        {
-          'id': 1,
-          'name': 'Test',
-          'email': 'test2@test.com',
-          'accountType': AccountType.USER,
-          'status': UserStatusEnum.ACTIVE,
-          'date': new Date()
-        },
-        {
-          'id': 2,
-          'name': 'Charles',
-          'email': 'charles@charles.com',
-          'accountType': AccountType.ADMIN,
-          'status': UserStatusEnum.INACTIVE,
-          'date': new Date()
-        },
-      ],
+      data: [],
       userId: null,
     }
   },
